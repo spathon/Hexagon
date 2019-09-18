@@ -1,0 +1,26 @@
+{
+  "name": "hexagon",
+  "version": "0.0.0",
+  "description": "Hexagon based game",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spathon/Hexagon.git"
+  },
+  "author": "Spathon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spathon/Hexagon/issues"
+  },
+  "homepage": "https://github.com/spathon/Hexagon#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
+  }
+}

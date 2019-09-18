@@ -67,7 +67,8 @@ for (let iY = 0; iY < ITEMS_HEIGHT; iY++) {
 
 
 const player = {
-  initPos: {}
+  initPos: {},
+  direction: null
 }
 
 function getDirection(value) {
@@ -98,7 +99,6 @@ function animate() {
   player.amount += 0.1
   const x = player.from.x + (player.to.x - player.from.x) * player.amount
   const y = player.from.y + (player.to.y - player.from.y) * player.amount
-  console.log(x, y, player.to)
   evtCtx.lineTo(x, y)
   evtCtx.strokeStyle = 'rgba(255, 255, 255, 1)'
   // evtCtx.lineWidth = 2
@@ -106,38 +106,36 @@ function animate() {
   evtCtx.shadowColor = 'rgba(255, 255, 255, .3)'
   evtCtx.stroke()
 
-  // if (x < 0) {
-  //   console.log('WTF', x, y, player.to)
-  //   return ''
-  // }
   if (inRange(x, player.to.x - 0.1, player.to.x + 0.1)) {
-    console.log('Init')
     const hex = hexa.pixelToFlatHex(new Point(x + player.directionX, y + player.directionY))
     const center = hexa.flatHexToPixel(hex)
     const corners = hexa.getCorners(center, TOTAL_SIZE)
     const endCorner = corners.findIndex(c => inRange(c.x, x - 1, x + 1) && inRange(c.y, y - 1, y + 1))
-    console.log('DONE', x, y, 'NEW', hex, 'CORNERS', corners, 'END', endCorner)
+    // console.log('DONE', x, y, 'NEW', hex, 'CORNERS', corners, 'END', endCorner)
     player.from = corners[endCorner]
     if (!player.from) {
       console.log('NOPE', corners, endCorner)
     }
-    const randomNext = randomBetween(0, 1)
-    if (randomNext) {
+    console.log('Direction', player.direction)
+    const nextDirection = player.direction !== null
+      ? player.direction
+      : randomBetween(0, 1)
+    if (nextDirection) {
       player.to = endCorner === 5 ? corners[0] : corners[endCorner + 1]
     } else {
       player.to = endCorner === 0 ? corners[5] : corners[endCorner - 1]
     }
+    player.direction = null
     player.amount = 0
     player.directionX = getDirection(player.from.x - player.to.x)
     player.directionY = getDirection(player.from.y - player.to.y)
-    draw(hex, '#911')
+    draw(hex, 'rgba(221, 61, 54, .5)')
     // drawCircle(corners[endCorner])
     animate()
   } else {
-    setTimeout(() => animate(), 10)
+    setTimeout(() => animate(), 100)
   }
 }
-
 
 
 function drawCircle(corner) {
@@ -187,4 +185,18 @@ evtCanvas.addEventListener('click', (evt) => {
   player.initPos = hex
   draw(hex, '#191')
   start()
+})
+
+
+// Left 37 - Up 38 - Right 39 - Down 40
+const arrows = {
+  37: { value: 0 },
+  38: { value: 1 },
+  39: { value: 1 },
+  40: { value: 0 },
+}
+document.addEventListener('keydown', (evt) => {
+  if (arrows[evt.keyCode]) {
+    player.direction = arrows[evt.keyCode].value
+  }
 })
