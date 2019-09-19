@@ -102,11 +102,13 @@ function animate() {
   evtCtx.lineTo(x, y)
   evtCtx.strokeStyle = 'rgba(255, 255, 255, 1)'
   // evtCtx.lineWidth = 2
-  // evtCtx.shadowBlur = 3
+  evtCtx.shadowBlur = 5
   evtCtx.shadowColor = 'rgba(255, 255, 255, .3)'
   evtCtx.stroke()
 
   if (inRange(x, player.to.x - 0.1, player.to.x + 0.1)) {
+    evtCtx.beginPath()
+    evtCtx.moveTo(x, y)
     const hex = hexa.pixelToFlatHex(new Point(x + player.directionX, y + player.directionY))
     const center = hexa.flatHexToPixel(hex)
     const corners = hexa.getCorners(center, TOTAL_SIZE)
@@ -133,7 +135,7 @@ function animate() {
     // drawCircle(corners[endCorner])
     animate()
   } else {
-    setTimeout(() => animate(), 100)
+    setTimeout(() => animate(), 10)
   }
 }
 
