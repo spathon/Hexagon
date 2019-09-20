@@ -95,6 +95,21 @@ function startGame() {
   animate()
 }
 
+// Neon Green
+// evtCtx.strokeStyle = 'rgba(11, 255, 1, 1)'
+// evtCtx.shadowColor = 'rgba(11, 255, 1, .5)'
+// Blue
+// evtCtx.strokeStyle = 'rgb(1,30,254)'
+// evtCtx.shadowColor = 'rgba(1,30,254, .5)'
+// Light blue
+// rgba(0, 145, 228, .5)
+// Pink
+// evtCtx.strokeStyle = 'rgb(254,0,246)'
+// evtCtx.shadowColor = 'rgba(254,0,246, .5)'
+// Yellow
+// evtCtx.strokeStyle = 'rgb(253,254,2)'
+// evtCtx.shadowColor = 'rgba(253,254,2, .3)'
+
 function animate() {
   player.amount += 0.1
   const x = player.from.x + (player.to.x - player.from.x) * player.amount
@@ -104,6 +119,8 @@ function animate() {
   // evtCtx.lineWidth = 2
   evtCtx.shadowBlur = 5
   evtCtx.shadowColor = 'rgba(255, 255, 255, .3)'
+  evtCtx.strokeStyle = 'rgba(11, 255, 1, 1)'
+  evtCtx.shadowColor = 'rgba(11, 255, 1, .5)'
   evtCtx.stroke()
 
   if (inRange(x, player.to.x - 0.1, player.to.x + 0.1)) {
