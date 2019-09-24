@@ -90,6 +90,8 @@ function startGame() {
   player.directionX = getDirection(corner.x - nextCorner.x)
   player.directionY = getDirection(corner.y - nextCorner.y)
 
+  evtCtx.beginPath()
+  evtCtx.moveTo(corner.x, corner.y)
   drawCircle(corner)
   evtCtx.moveTo(corner.x, corner.y)
   animate()
