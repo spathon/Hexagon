@@ -19,6 +19,8 @@ ctx.fillStyle = 'rgba(0, 0, 0, .5)'
 ctx.strokeStyle = '#007bd2'
 ctx.lineWidth = 1
 
+
+// Fixed variables
 const SIZE = 15
 const SPACING = 4
 const TOTAL_SIZE = SIZE + SPACING
@@ -45,8 +47,22 @@ const COLORS = [
   // { stroke: 'rgba(0, 0, 0, 1.00)', shadow: 'rgba(0, 0, 0, 1.00)' }, // Black SILENT KILLER
   { stroke: 'rgba(255, 255, 255, 1.00)', shadow: 'rgba(255, 255, 255, .6)' }, // White
 ]
+const directions = {
+  0: { hitPos: 'right', up: 0, left: 1, down: 1, right: 0, next: { 0: 60, 1: 300 } },
+  60: { hitPos: 'right-bottom', up: 0, left: 1, down: 1, right: 0, next: { 0: 120, 1: 0 } },
+  120: { hitPos: 'left-bottom', up: 1, left: 1, down: 0, right: 0, next: { 0: 180, 1: 60 } },
+  180: { hitPos: 'left', up: 1, left: 1, down: 0, right: 0, next: { 0: 240, 1: 120 } },
+  240: { hitPos: 'left-top', up: 1, left: 0, down: 0, right: 1, next: { 0: 300, 1: 180 } },
+  300: { hitPos: 'right-top', up: 0, left: 0, down: 1, right: 1, next: { 0: 0, 1: 240 } },
+}
+
+
+// state variables
 let currentColor
 let timeOutId
+
+
+
 
 const hexa = new Hexa({ size: SIZE, spacing: SPACING })
 
@@ -85,7 +101,8 @@ for (let iY = 0; iY < ITEMS_HEIGHT; iY++) {
 
 const player = {
   initPos: {},
-  direction: null
+  direction: null,
+  prevDirection: null
 }
 
 function getDirection(value) {
@@ -144,14 +161,17 @@ function animate() {
     if (!player.from) {
       console.log('NOPE', corners, endCorner)
     }
+    // console.log(player.from.degree, directions[player.from.degree], player.direction, directions[player.from.degree][player.direction])
     const nextDirection = player.direction !== null
-      ? player.direction
+      ? directions[player.from.degree][player.direction]
       : (outOfBounds) ? 1 : randomBetween(0, 1)
     if (nextDirection) {
       player.to = endCorner === 5 ? corners[0] : corners[endCorner + 1]
     } else {
       player.to = endCorner === 0 ? corners[5] : corners[endCorner - 1]
     }
+    // console.log('DIR', nextDirection, 'Degree', player.from.degree)
+    player.prevDirection = nextDirection
     player.direction = null
     player.amount = 0
     player.directionX = getDirection(player.from.x - player.to.x)
@@ -160,7 +180,7 @@ function animate() {
     // drawCircle(corners[endCorner])
     animate()
   } else {
-    timeOutId = setTimeout(() => animate(), 1)
+    timeOutId = setTimeout(() => animate(), 100)
   }
 }
 
@@ -215,16 +235,33 @@ evtCanvas.addEventListener('click', (evt) => {
   start()
 })
 
-
+const nextDirection = document.getElementById('nextDirection')
 // Left 37 - Up 38 - Right 39 - Down 40
 const arrows = {
-  37: { value: 0 },
-  38: { value: 1 },
-  39: { value: 1 },
-  40: { value: 0 },
+  37: { key: 'left', value: 0 },
+  38: { key: 'up', value: 1 },
+  39: { key: 'right', value: 1 },
+  40: { key: 'down', value: 0 },
 }
 document.addEventListener('keydown', (evt) => {
   if (arrows[evt.keyCode]) {
-    player.direction = arrows[evt.keyCode].value
+    const { key } = arrows[evt.keyCode]
+    const nextCorner = directions[player.from.degree].next[player.prevDirection]
+    const nextOptionsDir = directions[nextCorner][key]
+    const nextDirectionDegree = directions[nextCorner].next[nextOptionsDir]
+    nextDirection.style.transform = `rotate(${nextDirectionDegree - 180}deg)`
+    player.direction = key
+  }
+})
+
+const playPause = document.getElementById('pausePlay')
+playPause.addEventListener('click', () => {
+  if (timeOutId) {
+    playPause.textContent = '▶'
+    clearTimeout(timeOutId)
+    timeOutId = null
+  } else {
+    playPause.textContent = '■'
+    animate()
   }
 })

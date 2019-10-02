@@ -1,8 +1,9 @@
 
 
-export function Point(x, y) {
+export function Point(x, y, degree) {
   this.x = x
   this.y = y
+  this.degree = degree
 }
 
 
@@ -75,7 +76,8 @@ export class Hexa {
 
       const point = new Point(
         center.x + size * Math.cos(radian),
-        center.y + size * Math.sin(radian)
+        center.y + size * Math.sin(radian),
+        degree
       )
       points.push(point)
     }
