@@ -28,8 +28,25 @@ const HEIGHT = window.innerHeight
 const HEX_WIDTH = TOTAL_SIZE * 2
 const HEX_HEIGHT = Math.sqrt(3) * TOTAL_SIZE
 const HEX_SPACING = HEX_WIDTH * 3/4
-const ITEMS_WIDTH = WIDTH / HEX_SPACING
-const ITEMS_HEIGHT = HEIGHT / HEX_HEIGHT
+const ITEMS_WIDTH = WIDTH / HEX_SPACING + 1
+const ITEMS_HEIGHT = HEIGHT / HEX_HEIGHT + 1
+const COLORS = [
+  { name: 'green', stroke: 'rgba(11, 255, 1, 1)', shadow: 'rgba(11, 255, 1, .5)' },
+  // { name: 'blue', stroke: 'rgb(1,30,254)', shadow: 'rgba(1,30,254, .5)' }, // Nah
+  // { name: 'lightblue', stroke: 'rgb(0, 145, 228)', shadow: 'rgba(0, 145, 228, .5)' }, // Ok but ligher blur better
+  { name: 'pink', stroke: 'rgb(254,0,246)', shadow: 'rgba(254,0,246, .5)' },
+  { name: 'yellow', stroke: 'rgb(253,254,2)', shadow: 'rgba(253,254,2, .3)' },
+  { name: 'brigh-turquoise', stroke: 'rgb(12, 252, 211)', shadow: 'rgba(12, 252, 211, .8)' },
+  { stroke: 'rgb(254, 83, 188)', shadow: 'rgba(254, 83, 188, .8)' }, // Pink
+  { stroke: 'rgb(184, 108, 253)', shadow: 'rgba(184, 108, 253, 1)' }, // Purple
+  { stroke: 'rgb(118, 213, 253)', shadow: 'rgba(118, 213, 253, .8)' }, // Ligher blue Save
+  { stroke: 'rgb(252, 107, 104)', shadow: 'rgba(252, 107, 104, .4)' }, // Red
+  { stroke: 'rgba(255, 170, 1, 1.00)', shadow: 'rgba(255, 170, 1, 1.00)' }, // Orange
+  // { stroke: 'rgba(0, 0, 0, 1.00)', shadow: 'rgba(0, 0, 0, 1.00)' }, // Black SILENT KILLER
+  { stroke: 'rgba(255, 255, 255, 1.00)', shadow: 'rgba(255, 255, 255, .6)' }, // White
+]
+let currentColor
+let timeOutId
 
 const hexa = new Hexa({ size: SIZE, spacing: SPACING })
 
@@ -79,6 +96,7 @@ function getDirection(value) {
 
 
 function startGame() {
+  currentColor = COLORS[randomBetween(0, COLORS.length - 1)]
   const center = hexa.flatHexToPixel(player.initPos)
   const corners = hexa.getCorners(center, TOTAL_SIZE)
   const randomNum = randomBetween(0, 5)
@@ -94,23 +112,10 @@ function startGame() {
   evtCtx.moveTo(corner.x, corner.y)
   drawCircle(corner)
   evtCtx.moveTo(corner.x, corner.y)
+  clearTimeout(timeOutId)
   animate()
 }
 
-// Neon Green
-// evtCtx.strokeStyle = 'rgba(11, 255, 1, 1)'
-// evtCtx.shadowColor = 'rgba(11, 255, 1, .5)'
-// Blue
-// evtCtx.strokeStyle = 'rgb(1,30,254)'
-// evtCtx.shadowColor = 'rgba(1,30,254, .5)'
-// Light blue
-// rgba(0, 145, 228, .5)
-// Pink
-// evtCtx.strokeStyle = 'rgb(254,0,246)'
-// evtCtx.shadowColor = 'rgba(254,0,246, .5)'
-// Yellow
-// evtCtx.strokeStyle = 'rgb(253,254,2)'
-// evtCtx.shadowColor = 'rgba(253,254,2, .3)'
 
 function animate() {
   player.amount += 0.1
@@ -118,11 +123,12 @@ function animate() {
   const y = player.from.y + (player.to.y - player.from.y) * player.amount
   evtCtx.lineTo(x, y)
   evtCtx.strokeStyle = 'rgba(255, 255, 255, 1)'
-  // evtCtx.lineWidth = 2
+  evtCtx.lineWidth = 1
   evtCtx.shadowBlur = 5
   evtCtx.shadowColor = 'rgba(255, 255, 255, .3)'
-  evtCtx.strokeStyle = 'rgba(11, 255, 1, 1)'
-  evtCtx.shadowColor = 'rgba(11, 255, 1, .5)'
+
+  evtCtx.strokeStyle = currentColor.stroke
+  evtCtx.shadowColor = currentColor.shadow
   evtCtx.stroke()
 
   if (inRange(x, player.to.x - 0.1, player.to.x + 0.1)) {
@@ -131,16 +137,16 @@ function animate() {
     const hex = hexa.pixelToFlatHex(new Point(x + player.directionX, y + player.directionY))
     const center = hexa.flatHexToPixel(hex)
     const corners = hexa.getCorners(center, TOTAL_SIZE)
+    const outOfBounds = corners.find(c => c.y < 0 || c.y > HEIGHT || c.x < 0 || c.x > WIDTH)
     const endCorner = corners.findIndex(c => inRange(c.x, x - 1, x + 1) && inRange(c.y, y - 1, y + 1))
     // console.log('DONE', x, y, 'NEW', hex, 'CORNERS', corners, 'END', endCorner)
     player.from = corners[endCorner]
     if (!player.from) {
       console.log('NOPE', corners, endCorner)
     }
-    console.log('Direction', player.direction)
     const nextDirection = player.direction !== null
       ? player.direction
-      : randomBetween(0, 1)
+      : (outOfBounds) ? 1 : randomBetween(0, 1)
     if (nextDirection) {
       player.to = endCorner === 5 ? corners[0] : corners[endCorner + 1]
     } else {
@@ -154,18 +160,19 @@ function animate() {
     // drawCircle(corners[endCorner])
     animate()
   } else {
-    setTimeout(() => animate(), 10)
+    timeOutId = setTimeout(() => animate(), 1)
   }
 }
 
 
 function drawCircle(corner) {
-  const radius = 5
+  const radius = 2
+  evtCtx.beginPath()
   evtCtx.arc(corner.x, corner.y, radius, 0, 2 * Math.PI)
-  evtCtx.strokeStyle = 'rgba(0, 0, 0, 1)'
-  evtCtx.lineWidth = 1
+  evtCtx.fillStyle = currentColor.stroke
   evtCtx.stroke()
   evtCtx.fill()
+  evtCtx.beginPath()
 }
 
 function drawLine(from, to) {
