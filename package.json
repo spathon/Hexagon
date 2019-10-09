@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon",
     "dev:inspect": "nodemon --inspect",
+    "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -25,6 +26,8 @@
   },
   "devDependencies": {
     "eslint": "^6.5.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
     "nodemon": "^1.19.2"
   }
 }

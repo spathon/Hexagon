@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   Hexa, Point, Hex
 } from './hex.js'

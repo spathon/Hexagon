@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
   players.push(socket.id)
   socket.on('disconnect', () => {
     console.log('Disconnected:', socket.id)
-    const filtered = players.filter(p => p !== socket.id)
+    const filtered = players.filter((p) => p !== socket.id)
     players = [...filtered]
   })
 
@@ -34,13 +34,13 @@ io.on('connection', (socket) => {
     const gameId = generateGameId()
     games[gameId] = {
       createdAt: Date.now(),
-      players: [{ id: socket.id, username: msg.username }]
+      players: [{ id: socket.id, username: msg.username }],
     }
     console.log(games)
     return gameId
   })
 })
 
-const server = httpServer.listen(5555, () => {
+httpServer.listen(5555, () => {
   console.log(`Express ready on ${5555}`)
 })
