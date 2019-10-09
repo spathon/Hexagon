@@ -8,15 +8,25 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <canvas id="board"></canvas>
-  <canvas id="interactive"></canvas>
-  <div id="countDown"></div>
-  <div class="menu" id="menu">
-    <button type="button" id="pausePlay">?</button>
+  <div class="header">
+    <h1 class="logo">Hexagon</h1>
   </div>
-  <div class="next-direction" id="nextDirection">
-    ➤
+  <form id="startGameForm" class="start">
+    <h3>Start a new game</h3>
+    <div class="block">
+      <label for="username">Username</label>
+      <input id="username" class="input" />
+    </div>
+    <div class="block text-right">
+      <button class="btn btn-block">Start!</button>
+    </div>
+  </form>
+  <div class="game-area" id="game">
+    <canvas id="background"></canvas>
   </div>
-  <script type="module" src="./script.js"></script>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="module" src="/js/game.js"></script>
+  <script type="module" src="/js/script.js"></script>
 </body>
 </html>
