@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Hexagon</title>
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div class="header">
@@ -24,7 +24,9 @@
   <div class="game-area" id="game">
     <canvas id="background"></canvas>
   </div>
-
+  <script>
+    var GAME_ID = '__GAME_ID__'
+  </script>
   <script src="/socket.io/socket.io.js"></script>
   <script type="module" src="/js/game.js"></script>
   <script type="module" src="/js/script.js"></script>
